@@ -6,14 +6,21 @@ import {
   Text,
   View,
 } from "react-native";
+
+import { useDispatch, useSelector } from "react-redux";
 import { useGetUsersServiceQuery } from "../../service/user.service";
+import { clearSelectedUser } from "../../store/user.slice";
 import SearchBar from "../searchBar/SearchBar";
 import UserItem from "../userItem/UserItem";
+import UserModal from "../userModal/UserModal";
 
 export default function UserList() {
   const { data: users, error, isLoading } = useGetUsersServiceQuery();
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  const dispatch = useDispatch();
+  const selectedUser = useSelector((state) => state.user.selectedUser);
 
   if (isLoading) {
     return (
@@ -35,6 +42,12 @@ export default function UserList() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <UserItem user={item} />}
       />
+      {selectedUser && (
+        <UserModal
+          username={selectedUser}
+          onClose={() => dispatch(clearSelectedUser())}
+        />
+      )}
     </View>
   );
 }

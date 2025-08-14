@@ -7,11 +7,13 @@ const userSlice = createSlice({
   },
   reducers: {
     setSelectedUser: (state, action) => {
-      console.log("🚀 ~ action:", action);
       state.selectedUser = action.payload;
+    },
+    clearSelectedUser: (state) => {
+      state.selectedUser = null;
     },
   },
 });
 
-export const { setSelectedUser } = userSlice.actions;
+export const { setSelectedUser, clearSelectedUser } = userSlice.actions;
 export default userSlice.reducer;
