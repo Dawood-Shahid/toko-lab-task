@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -8,9 +8,13 @@ import {
   View,
 } from "react-native";
 import { useGetUsersServiceQuery } from "../../service/user.service";
+import SearchBar from "../searchBar/SearchBar";
 
 export default function UserList() {
   const { data: users, error, isLoading } = useGetUsersServiceQuery();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  console.log("🚀 ~ UserList ~ searchTerm:", searchTerm);
 
   if (isLoading) {
     return (
@@ -26,6 +30,7 @@ export default function UserList() {
 
   return (
     <View style={{ flex: 1 }}>
+      <SearchBar onSearch={setSearchTerm} />
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}
