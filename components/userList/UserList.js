@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useGetUsersServiceQuery } from "../../service/user.service";
 import SearchBar from "../searchBar/SearchBar";
+import UserItem from "../userItem/UserItem";
 
 export default function UserList() {
   const { data: users, error, isLoading } = useGetUsersServiceQuery();
 
   const [searchTerm, setSearchTerm] = useState("");
-  console.log("🚀 ~ UserList ~ searchTerm:", searchTerm);
 
   if (isLoading) {
     return (
@@ -34,19 +33,7 @@ export default function UserList() {
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          return (
-            <View style={styles.card}>
-              <Image source={{ uri: item.avatar_url }} style={styles.avatar} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.name}>{item.login}</Text>
-                <View style={styles.linkContainer}>
-                  <Text style={styles.link}>{item.html_url}</Text>
-                </View>
-              </View>
-            </View>
-          );
-        }}
+        renderItem={({ item }) => <UserItem user={item} />}
       />
     </View>
   );
