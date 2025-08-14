@@ -8,27 +8,28 @@ import {
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useGetUsersServiceQuery } from "../../service/user.service";
+import {
+  useGetSearchUsersServiceQuery,
+  useGetUsersServiceQuery,
+} from "../../service/user.service";
 import { clearSelectedUser } from "../../store/user.slice";
 import SearchBar from "../searchBar/SearchBar";
 import UserItem from "../userItem/UserItem";
 import UserModal from "../userModal/UserModal";
 
 export default function UserList() {
-  const { data: users, error, isLoading } = useGetUsersServiceQuery();
-
   const [searchTerm, setSearchTerm] = useState("");
+
+  const { data: users, error, isLoading } = useGetUsersServiceQuery();
+  const { data: searchResults, isLoading: searching } =
+    useGetSearchUsersServiceQuery(searchTerm, {
+      skip: searchTerm.length === 0,
+    });
+
+  const dataToRender = searchTerm.length > 0 ? searchResults?.items : users;
 
   const dispatch = useDispatch();
   const selectedUser = useSelector((state) => state.user.selectedUser);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
 
   if (error) {
     return <Text style={styles.error}>Failed to load users</Text>;
@@ -37,11 +38,17 @@ export default function UserList() {
   return (
     <View style={{ flex: 1 }}>
       <SearchBar onSearch={setSearchTerm} />
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <UserItem user={item} />}
-      />
+      {isLoading | searching ? (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
+        <FlatList
+          data={dataToRender}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <UserItem user={item} />}
+        />
+      )}
       {selectedUser && (
         <UserModal
           username={selectedUser}
