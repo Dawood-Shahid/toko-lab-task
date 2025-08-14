@@ -1,14 +1,17 @@
-import 'react-native-reanimated';
+import "react-native-reanimated";
 
-import { Text, } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Provider } from "react-redux";
+import UserList from "../components/userList/UserList";
+import { store } from "../store/store";
 
 export default function RootLayout() {
-
   return (
-      <SafeAreaView style={{ minHeight: '100%' }}>
-        <Text>React Native Expo App</Text>
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={{ minHeight: "100%" }}>
+        <UserList />
+      </SafeAreaView>
+    </Provider>
   );
 }
